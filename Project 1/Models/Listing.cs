@@ -24,5 +24,7 @@ namespace Project_1.Models
         public List<Comment>? Comments { get; set; }
 
         public DateTime ClosingTime { get; set; }
+
+
     }
 }

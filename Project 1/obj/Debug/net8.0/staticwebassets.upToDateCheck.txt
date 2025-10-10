@@ -1,6 +1,7 @@
 wwwroot\css\home.css
 wwwroot\css\site.css
 wwwroot\favicon.ico
+wwwroot\Images\0x1.jpg
 wwwroot\Images\2lkze15mf7t1ovxhv3n3tbv8winn (1).jpg
 wwwroot\Images\3198058_462709-PFRD1V-304.jpg
 wwwroot\Images\bag.png

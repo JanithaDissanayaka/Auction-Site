@@ -45,7 +45,7 @@ namespace Project_1.Controllers
             _hubContext = hubContext;
         }
 
-        // ✅ Helper method: Automatically close expired listings
+        // ✅ Automatically close expired listings
         private async Task CheckAndCloseExpiredListings()
         {
             var expiredListings = await _context.Listings
@@ -60,15 +60,12 @@ namespace Project_1.Controllers
                 {
                     listing.IsSold = true;
 
-                    var highestBid = listing.Bids?
-                        .OrderByDescending(b => b.Price)
-                        .FirstOrDefault();
-
+                    var highestBid = listing.Bids?.OrderByDescending(b => b.Price).FirstOrDefault();
                     if (highestBid != null && highestBid.User != null)
                     {
                         string subject = "Congratulations! You have won the bid!";
                         string message = $"Dear {highestBid.User.UserName},\n\n" +
-                                         $"You have won the bid for '{listing.Title}' with a bid of Rs {highestBid.Price.ToString("N2")}.\n\n" +
+                                         $"You have won the bid for '{listing.Title}' with Rs {highestBid.Price:N2}.\n\n" +
                                          "Please contact us to finalize the transaction.\n\n" +
                                          "Best regards,\nAuction Team";
 
@@ -82,7 +79,6 @@ namespace Project_1.Controllers
                         }
                     }
 
-                    // Optional: Notify clients in real time that bidding closed
                     await _hubContext.Clients.All.SendAsync("BidClosed", listing.Id);
                 }
 
@@ -93,9 +89,7 @@ namespace Project_1.Controllers
         // GET: Listings
         public async Task<IActionResult> Index(int? pageNumber, string searchString)
         {
-            // 🔍 Check for expired listings before displaying
             await CheckAndCloseExpiredListings();
-
             var listings = _listingsService.GetAll();
             int pageSize = 3;
 
@@ -112,7 +106,6 @@ namespace Project_1.Controllers
         public async Task<IActionResult> MyListings(int? pageNumber)
         {
             await CheckAndCloseExpiredListings();
-
             var listings = _listingsService.GetAll();
             int pageSize = 3;
 
@@ -125,7 +118,6 @@ namespace Project_1.Controllers
         public async Task<IActionResult> MyBids(int? pageNumber)
         {
             await CheckAndCloseExpiredListings();
-
             var bids = _bidsService.GetAll();
             int pageSize = 3;
 
@@ -140,13 +132,10 @@ namespace Project_1.Controllers
         {
             await CheckAndCloseExpiredListings();
 
-            if (id == null)
-                return NotFound();
+            if (id == null) return NotFound();
 
             var listing = await _listingsService.GetById(id);
-
-            if (listing == null)
-                return NotFound();
+            if (listing == null) return NotFound();
 
             return View(listing);
         }
@@ -168,17 +157,12 @@ namespace Project_1.Controllers
                 string fileName = listing.Image.FileName;
                 string filePath = Path.Combine(uploadDir, fileName);
 
-                using (var fileStream = new FileStream(filePath, FileMode.Create))
-                {
-                    await listing.Image.CopyToAsync(fileStream);
-                }
+                using var fileStream = new FileStream(filePath, FileMode.Create);
+                await listing.Image.CopyToAsync(fileStream);
 
                 var identityUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (identityUserId == null) return Unauthorized();
 
-                if (identityUserId == null)
-                    return Unauthorized();
-
-                // 🕒 Add ClosingTime (default 5 mins from creation, or customize)
                 var listObj = new Listing
                 {
                     Title = listing.Title,
@@ -186,7 +170,7 @@ namespace Project_1.Controllers
                     Price = listing.Price,
                     IdentityUserId = identityUserId,
                     ImagePath = fileName,
-                    ClosingTime = DateTime.Now.AddMinutes(5), // example: 5 minutes
+                    ClosingTime = DateTime.Now.AddMinutes(5),
                     IsSold = false
                 };
 
@@ -197,6 +181,7 @@ namespace Project_1.Controllers
             return View(listing);
         }
 
+        // POST: Add Bid
         [HttpPost]
         public async Task<ActionResult> AddBid([Bind("Id, Price, ListingId, IdentityUserId")] Bid bid)
         {
@@ -205,7 +190,6 @@ namespace Project_1.Controllers
                 await _bidsService.Add(bid);
 
                 var listing = await _listingsService.GetById(bid.ListingId);
-
                 if (listing != null && !listing.IsSold)
                 {
                     listing.Price = bid.Price;
@@ -220,6 +204,7 @@ namespace Project_1.Controllers
             return RedirectToAction("Details", new { id = bid.ListingId });
         }
 
+        // POST: Close Bidding
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CloseBidding(int id)
@@ -229,25 +214,22 @@ namespace Project_1.Controllers
                     .ThenInclude(b => b.User)
                 .FirstOrDefaultAsync(l => l.Id == id);
 
-            if (listing == null)
-                return NotFound();
+            if (listing == null) return NotFound();
 
             listing.IsSold = true;
             _context.Update(listing);
 
             var highestBid = listing.Bids?.OrderByDescending(b => b.Price).FirstOrDefault();
-
             if (highestBid != null && highestBid.User != null)
             {
-                var highestBidder = highestBid.User;
                 string subject = "Congratulations! You have won the bid!";
-                string message = $"Dear {highestBidder.UserName},\n\n" +
-                                 $"Congratulations! You have won the bid with a bid of Rs {highestBid.Price.ToString("N2")}.\n\n" +
+                string message = $"Dear {highestBid.User.UserName},\n\n" +
+                                 $"Congratulations! You have won the bid with Rs {highestBid.Price:N2}.\n\n" +
                                  "Best regards,\nAuction Team";
 
                 try
                 {
-                    await _emailSender.SendEmailAsync(highestBidder.Email, subject, message);
+                    await _emailSender.SendEmailAsync(highestBid.User.Email, subject, message);
                 }
                 catch (Exception ex)
                 {
@@ -256,10 +238,59 @@ namespace Project_1.Controllers
             }
 
             await _context.SaveChangesAsync();
-
             return RedirectToAction("Details", new { id = listing.Id });
         }
 
+        // POST: Delete Listing (Cancel without selling)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteListing(int id)
+        {
+            var listing = await _context.Listings
+                .Include(l => l.Bids)
+                .FirstOrDefaultAsync(l => l.Id == id);
+
+            if (listing == null) return NotFound();
+
+            // Only allow deleting if the listing is still open
+            if (listing.IsSold) return BadRequest("Cannot delete a closed listing.");
+
+            if (listing.Bids != null && listing.Bids.Any())
+                _context.Bids.RemoveRange(listing.Bids);
+
+            _context.Listings.Remove(listing);
+            await _context.SaveChangesAsync();
+
+            await _hubContext.Clients.All.SendAsync("ListingDeleted", id);
+
+            return RedirectToAction("MyListings");
+        }
+
+        // POST: Delete an individual bid (before closing)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteBid(int id)
+        {
+            var bid = await _context.Bids
+                .Include(b => b.Listing)
+                .FirstOrDefaultAsync(b => b.Id == id);
+
+            if (bid == null) return NotFound();
+
+            if (bid.Listing.IsSold)
+                return BadRequest("Cannot delete a bid for a closed listing.");
+
+            _context.Bids.Remove(bid);
+            await _context.SaveChangesAsync();
+
+            await _hubContext.Clients.Group($"listing-{bid.ListingId}")
+                .SendAsync("BidDeleted", bid.Id);
+
+            TempData["Success"] = "Bid deleted successfully.";
+            return RedirectToAction("MyBids");
+        }
+
+        // POST: Add Comment
         [HttpPost]
         public async Task<ActionResult> AddComment([Bind("Id, Content, ListingId, IdentityUserId")] Comment comment)
         {
@@ -272,6 +303,7 @@ namespace Project_1.Controllers
             return View("Details", listing);
         }
 
+        // GET: Won Bids
         public async Task<IActionResult> WonBids()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);

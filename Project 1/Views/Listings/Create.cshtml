@@ -44,7 +44,11 @@
                 <label class="form-label">Auction Duration</label>
                 <div class="d-flex gap-3">
                     <div>
-                        <input type="number" asp-for="ClosingHours" min="0" max="72" class="form-control" placeholder="Hours" />
+                        <input type="number" asp-for="ClosingDays" min="0" max="30" class="form-control" placeholder="Days" />
+                        <small class="text-muted">Days</small>
+                    </div>
+                    <div>
+                        <input type="number" asp-for="ClosingHours" min="0" max="23" class="form-control" placeholder="Hours" />
                         <small class="text-muted">Hours</small>
                     </div>
                     <div>
@@ -52,6 +56,7 @@
                         <small class="text-muted">Minutes</small>
                     </div>
                 </div>
+                <span asp-validation-for="ClosingDays" class="text-danger"></span>
                 <span asp-validation-for="ClosingHours" class="text-danger"></span>
                 <span asp-validation-for="ClosingMinutes" class="text-danger"></span>
             </div>

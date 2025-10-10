@@ -4,7 +4,7 @@ using Project_1.Data.Services;
 using Project_1.Data;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Project_1.Hubs;
-using Project_1.Services; // ✅ NEW: for BidExpirationService
+using Project_1.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,27 +25,58 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options =>
     options.Password.RequireLowercase = true;
     options.Password.RequiredLength = 8;
 })
+.AddRoles<IdentityRole>() // Add Roles
 .AddEntityFrameworkStores<ApplicationDbContext>();
 
 // ----------------- SignalR Service -----------------
-builder.Services.AddSignalR(); // ✅ Enables SignalR real-time connections
+builder.Services.AddSignalR();
 
 // ----------------- Application Services -----------------
 builder.Services.AddScoped<IListingsService, ListingsService>();
 builder.Services.AddScoped<IBidsService, BidsService>();
 builder.Services.AddScoped<ICommentsService, CommentsService>();
 
-// ✅ Register the background service for automatic bid expiration
 builder.Services.AddHostedService<BidExpirationService>();
-
-// ----------------- Fake Email Sender (for testing) -----------------
 builder.Services.AddSingleton<IEmailSender, NoEmailSender>();
 
-// ----------------- MVC / Razor -----------------
 builder.Services.AddControllersWithViews();
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
+// ----------------- Authorization -----------------
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
+});
+
 var app = builder.Build();
+
+// ----------------- Seed Admin Role & User -----------------
+using (var scope = app.Services.CreateScope())
+{
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
+
+    // Create Admin role if it doesn't exist
+    if (!await roleManager.RoleExistsAsync("Admin"))
+    {
+        await roleManager.CreateAsync(new IdentityRole("Admin"));
+    }
+
+    // Create Admin user if it doesn't exist
+    var adminEmail = "admin@example.com";
+    var adminUser = await userManager.FindByEmailAsync(adminEmail);
+    if (adminUser == null)
+    {
+        adminUser = new IdentityUser
+        {
+            UserName = adminEmail,
+            Email = adminEmail,
+            EmailConfirmed = true
+        };
+        await userManager.CreateAsync(adminUser, "Admin@123"); // Password
+        await userManager.AddToRoleAsync(adminUser, "Admin");
+    }
+}
 
 // ----------------- Middleware -----------------
 if (app.Environment.IsDevelopment())
@@ -61,36 +92,35 @@ else
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
 app.UseRouting();
-
 app.UseAuthentication();
 app.UseAuthorization();
 
 // ----------------- SignalR Hub Mapping -----------------
-app.MapHub<BidHub>("/bidHub"); // ✅ SignalR endpoint for real-time bidding
+app.MapHub<BidHub>("/bidHub");
 
 // ----------------- Routes -----------------
 app.MapControllerRoute(
+    name: "admin",
+    pattern: "{area:exists}/{controller=Admin}/{action=Dashboard}/{id?}");
+
+app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
-app.MapRazorPages();
 
-// ----------------- Run -----------------
+app.MapRazorPages();
 app.Run();
 
-
-// ----------------- Fake Email Sender Class -----------------
+// ----------------- Fake Email Sender -----------------
 public class NoEmailSender : IEmailSender
 {
     public Task SendEmailAsync(string email, string subject, string htmlMessage)
     {
-        // 🚫 Skips sending real emails (used for local testing)
         return Task.CompletedTask;
     }
 }
 
-// ----------------- Hub Class -----------------
+// ----------------- Hub -----------------
 namespace Project_1.Hubs
 {
     using Microsoft.AspNetCore.SignalR;
@@ -98,24 +128,26 @@ namespace Project_1.Hubs
 
     public class BidHub : Hub
     {
-        // 🔹 Called when a new highest bid is placed
         public async Task UpdateHighestBid(int listingId, string newHighestBidAmount)
         {
             await Clients.Group($"listing-{listingId}")
                 .SendAsync("ReceiveNewHighestBid", newHighestBidAmount);
         }
 
-        // 🔹 Called when a user views a specific listing
         public async Task JoinListingGroup(int listingId)
         {
             await Groups.AddToGroupAsync(Context.ConnectionId, $"listing-{listingId}");
         }
 
-        // 🔹 (Optional) Notify when auction ends
         public async Task NotifyAuctionEnded(int listingId, string winner, decimal finalPrice)
         {
             await Clients.Group($"listing-{listingId}")
                 .SendAsync("AuctionEnded", new { listingId, winner, finalPrice });
+        }
+
+        public async Task AdminBroadcast(string message)
+        {
+            await Clients.All.SendAsync("ReceiveAdminMessage", message);
         }
     }
 }

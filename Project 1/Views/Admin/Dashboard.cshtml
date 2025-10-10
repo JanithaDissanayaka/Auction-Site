@@ -1,0 +1,22 @@
+﻿@model Project_1.Models.AdminDashboardViewModel
+
+<h1>Admin Dashboard</h1>
+
+<h2>Listings</h2>
+<table class="table">
+    <tr>
+        <th>Title</th>
+        <th>Highest Bid</th>
+        <th>Actions</th>
+    </tr>
+    @foreach (var listing in Model.Listings)
+    {
+        <tr>
+            <td>@listing.Title</td>
+            <td>@listing.Bids?.OrderByDescending(b => b.Price).FirstOrDefault()?.Price?? 0</td>
+            <td>
+                <a asp-area="Admin" asp-controller="Admin" asp-action="ApproveBid" asp-route-id="@listing.Id" class="btn btn-success">Approve</a>
+            </td>
+        </tr>
+    }
+</table>

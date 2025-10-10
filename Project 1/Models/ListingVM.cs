@@ -22,6 +22,8 @@ namespace Project_1.Models
         public int ClosingHours { get; set; }
         public int ClosingMinutes { get; set; }
 
+        public int ClosingDays { get; set; }
+
 
     }
 }

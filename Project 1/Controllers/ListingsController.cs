@@ -161,7 +161,20 @@ namespace Project_1.Controllers
                 await listing.Image.CopyToAsync(fileStream);
 
                 var identityUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                if (identityUserId == null) return Unauthorized();
+                if (identityUserId == null)
+                    return Unauthorized();
+
+                // 🕒 Combine days, hours, and minutes properly
+                var totalDuration = TimeSpan.FromDays(listing.ClosingDays)
+                                   + TimeSpan.FromHours(listing.ClosingHours)
+                                   + TimeSpan.FromMinutes(listing.ClosingMinutes);
+
+                // ✅ Validate total duration
+                if (totalDuration.TotalMinutes <= 0)
+                {
+                    ModelState.AddModelError("", "Please set a valid auction duration.");
+                    return View(listing);
+                }
 
                 var listObj = new Listing
                 {
@@ -170,7 +183,10 @@ namespace Project_1.Controllers
                     Price = listing.Price,
                     IdentityUserId = identityUserId,
                     ImagePath = fileName,
-                    ClosingTime = DateTime.Now.AddMinutes(5),
+
+                    // ✅ Now includes days too
+                    ClosingTime = DateTime.Now.Add(totalDuration),
+
                     IsSold = false
                 };
 
@@ -180,6 +196,8 @@ namespace Project_1.Controllers
 
             return View(listing);
         }
+
+
 
         // POST: Add Bid
         [HttpPost]
@@ -209,8 +227,7 @@ namespace Project_1.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CloseBidding(int id)
         {
-            var listing = await _context.Listings
-                .Include(l => l.Bids)
+            var listing = await _context.Listings.Include(l => l.Bids)
                     .ThenInclude(b => b.User)
                 .FirstOrDefaultAsync(l => l.Id == id);
 

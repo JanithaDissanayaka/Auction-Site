@@ -32,6 +32,15 @@
                         <div class="card-body text-center">
                             <h5 class="card-title" style="color:#4b2c20;">@listing.Title</h5>
                             <p>Current Bid: <strong>Rs @currentPrice.ToString("N2")</strong></p>
+                            <p class="card-text">
+                                <strong>Time Remaining:</strong>
+                                <span id="timer-@listing.Id"
+                                      data-closing-time="@listing.ClosingTime.ToString("o")"
+                                      style="color:@(listing.IsSold ? "red" : "green"); font-weight:bold;">
+                                    @(listing.IsSold ? "Bidding Closed" : "")
+                                </span>
+                            </p>
+
                             <a href="/Listings/Details/@listing.Id" class="btn btn-warning text-white">Place Bid</a>
                         </div>
                     </div>
@@ -54,3 +63,29 @@
         and secure for buyers and sellers alike.
     </p>
 </div>
+
+<script>
+    document.querySelectorAll("[id^='timer-']").forEach(timer => {
+        const closingTime = new Date(timer.dataset.closingTime);
+
+        function updateTimer() {
+            const now = new Date();
+            const diff = closingTime - now;
+
+            if (diff <= 0) {
+                timer.textContent = "Bidding Closed";
+                timer.style.color = "red";
+                return;
+            }
+
+            const hours = Math.floor(diff / (1000 * 60 * 60));
+            const minutes = Math.floor((diff / (1000 * 60)) % 60);
+            const seconds = Math.floor((diff / 1000) % 60);
+
+            timer.textContent = `${hours}h ${minutes}m ${seconds}s`;
+        }
+
+        updateTimer();
+        setInterval(updateTimer, 1000);
+    });
+</script>

@@ -1,5 +1,6 @@
 ﻿@model Project_1.Models.Listing
 @using Microsoft.AspNetCore.Identity
+
 @inject UserManager<IdentityUser> userManager
 
 @{
@@ -88,6 +89,15 @@
 
                         @if (!Model.IsSold)
                         {
+                            <p class="card-text">
+                                <strong>Time Remaining:</strong>
+                                <span id="timer-@Model.Id"
+                                      data-closing-time="@Model.ClosingTime.ToString("o")"
+                                      style="color:@(Model.IsSold ? "red" : "green"); font-weight:bold;">
+                                    @(Model.IsSold ? "Bidding Closed" : "")
+                                </span>
+                            </p>
+
                             <form asp-action="CloseBidding" asp-route-id="@Model.Id" method="post" class="mt-2">
                                 @Html.AntiForgeryToken()
                                 <button type="submit" class="btn btn-danger">Close Bidding</button>
@@ -193,5 +203,30 @@
             .catch(err => console.error(err.toString()));
     }).catch(function (err) {
         return console.error(err.toString());
+    });
+</script>
+<script>
+    document.querySelectorAll("[id^='timer-']").forEach(timer => {
+        const closingTime = new Date(timer.dataset.closingTime);
+
+        function updateTimer() {
+            const now = new Date();
+            const diff = closingTime - now;
+
+            if (diff <= 0) {
+                timer.textContent = "Bidding Closed";
+                timer.style.color = "red";
+                return;
+            }
+
+            const hours = Math.floor(diff / (1000 * 60 * 60));
+            const minutes = Math.floor((diff / (1000 * 60)) % 60);
+            const seconds = Math.floor((diff / 1000) % 60);
+
+            timer.textContent = `${hours}h ${minutes}m ${seconds}s`;
+        }
+
+        updateTimer();
+        setInterval(updateTimer, 1000);
     });
 </script>

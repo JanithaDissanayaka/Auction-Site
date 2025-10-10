@@ -1,47 +1,54 @@
-﻿@{
+﻿@model List<Project_1.Models.Listing>
+
+@{
     ViewData["Title"] = "Home Page";
 }
 
 <!-- Link external CSS -->
 <link rel="stylesheet" href="~/css/home.css" />
 
-
 <!-- Hero Section -->
-<div class="hero-section">
+<div class="hero-section text-center py-5">
     <h1>Bid for Timeless Treasures</h1>
     <p>Explore our exclusive collection of antiques and rare collectibles.</p>
     <a href="/Listings" class="btn-gold">Start Bidding</a>
 </div>
 
 <!-- Featured Auctions -->
-<div class="section">
-    <h2>Featured Auctions</h2>
-    <div class="auction-items">
-        <div class="auction-card">
-            <img src="https://via.placeholder.com/300x200" alt="Antique Vase">
-            <h3>18th Century Porcelain Vase</h3>
-            <p>Current Bid: $1,200</p>
-            <a href="/Listings/Details/1" class="btn-gold">Place Bid</a>
+<div class="section container my-5">
+    <h2 class="text-center mb-4" style="color:#4b2c20;">Featured Auctions</h2>
+
+    @if (Model != null && Model.Any())
+    {
+        <div class="row justify-content-center">
+            @foreach (var listing in Model)
+            {
+                var highestBid = listing.Bids?.OrderByDescending(b => b.Price).FirstOrDefault();
+                var currentPrice = highestBid?.Price ?? listing.Price;
+
+                <div class="col-md-4 mb-4 d-flex">
+                    <div class="auction-card card flex-fill shadow-sm border-0" style="background-color:#fff8e7; border-radius:12px;">
+                        <img src="~/Images/@listing.ImagePath" alt="@listing.Title" class="card-img-top" style="height:250px; object-fit:cover; border-top-left-radius:12px; border-top-right-radius:12px;" />
+                        <div class="card-body text-center">
+                            <h5 class="card-title" style="color:#4b2c20;">@listing.Title</h5>
+                            <p>Current Bid: <strong>Rs @currentPrice.ToString("N2")</strong></p>
+                            <a href="/Listings/Details/@listing.Id" class="btn btn-warning text-white">Place Bid</a>
+                        </div>
+                    </div>
+                </div>
+            }
         </div>
-        <div class="auction-card">
-            <img src="https://via.placeholder.com/300x200" alt="Vintage Watch">
-            <h3>Victorian Pocket Watch</h3>
-            <p>Current Bid: $800</p>
-            <a href="/Listings/Details/2" class="btn-gold">Place Bid</a>
-        </div>
-        <div class="auction-card">
-            <img src="https://via.placeholder.com/300x200" alt="Antique Painting">
-            <h3>Oil Painting (19th Century)</h3>
-            <p>Current Bid: $2,500</p>
-            <a href="/Listings/Details/3" class="btn-gold">Place Bid</a>
-        </div>
-    </div>
+    }
+    else
+    {
+        <p class="text-center text-muted">No active auctions available right now.</p>
+    }
 </div>
 
 <!-- About Section -->
-<div class="section">
-    <h2>Trusted Antique Auction House</h2>
-    <p>
+<div class="section text-center py-5" style="background-color:#fdfbf7;">
+    <h2 style="color:#4b2c20;">Trusted Antique Auction House</h2>
+    <p class="mt-3">
         We specialize in connecting collectors with rare and valuable antiques from around the world.
         With a tradition of trust and excellence, we ensure that every auction is transparent, fair,
         and secure for buyers and sellers alike.

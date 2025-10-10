@@ -1,38 +1,30 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Project_1.Data;
 using Project_1.Models;
-using System.Diagnostics;
 
 namespace Project_1.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly ApplicationDbContext _context;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ApplicationDbContext context)
         {
-            _logger = logger;
+            _context = context;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
-        }
+            // Get top 3 featured listings (you can filter by IsSold == false if you want only open ones)
+            var featuredListings = await _context.Listings
+                .Include(l => l.Bids)
+                .Where(l => !l.IsSold)
+                .OrderByDescending(l => l.Id)
+                .Take(3)
+                .ToListAsync();
 
-        public IActionResult Privacy()
-        {
-            return View();
+            return View(featuredListings);
         }
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
-
-        public IActionResult AboutUs()
-        {
-            return View();
-        }
-
     }
 }

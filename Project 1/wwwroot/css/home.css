@@ -122,3 +122,30 @@
         background-color: #808080;
         border-color: #808080;
     }
+
+.btn-gold {
+    background-color: #b8860b;
+    color: white;
+    border-radius: 8px;
+    padding: 10px 20px;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+}
+
+    .btn-gold:hover {
+        background-color: #a67c00;
+        color: white;
+    }
+
+.hero-section {
+    background-color: #fdfbf7;
+    padding: 80px 20px;
+}
+
+.section {
+    margin-top: 50px;
+}
+
+.card-title {
+    font-weight: bold;
+}

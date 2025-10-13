@@ -2,6 +2,8 @@
 
 <h2>Manage Listings</h2>
 
+@Html.AntiForgeryToken()
+
 <table class="table table-bordered">
     <thead>
         <tr>
@@ -19,8 +21,11 @@
                 <td>@listing.Title</td>
                 <td>@listing.Status</td>
                 <td>
-                    <a href="@Url.Action("Edit", "Listings", new { id = listing.Id })" class="btn btn-sm btn-warning">Edit</a>
-                    <a href="@Url.Action("Delete", "Listings", new { id = listing.Id })" class="btn btn-sm btn-danger">Delete</a>
+                    <form asp-action="DeleteListing" asp-controller="Listings" method="post" style="display:inline;">
+                        <input type="hidden" name="id" value="@listing.Id" />
+                        <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                        @Html.AntiForgeryToken()
+                    </form>
                 </td>
             </tr>
         }

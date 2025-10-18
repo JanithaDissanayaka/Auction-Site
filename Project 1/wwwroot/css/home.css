@@ -1,562 +1,225 @@
-﻿/* --- Root Variables (Modern, Premium Palette) --- */
+﻿home.css
+/* ---------------------------------- */
+/* 1. Professional Color Palette & Fonts */
+/* ---------------------------------- */
 :root {
-    --color-text: #333;
-    --color-text-light: #555;
-    --color-primary: #1a3a5a; /* A deep, sophisticated navy blue */
-    --color-accent: #d4af37; /* A refined, antique gold */
-    --color-accent-light: #fbf5e5; /* A very light cream for accents */
-    --color-background: #f8f9fa; /* A very light grey, almost white */
-    --color-card-bg: #ffffff; /* Pure white for cards to "pop" */
-    --color-border: #e0e0e0; /* Light grey for borders */
-    --font-primary: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    --shadow-sm: 0 2px 8px rgba(0,0,0,0.06);
-    --shadow-md: 0 4px 15px rgba(0,0,0,0.1);
-    --border-radius: 8px;
+    /* Primary Colors */
+    --color-gold: #b8860b; /* Rich, deep gold */
+    --color-gold-dark: #8c6a08; /* Darker gold for hover/contrast */
+    --color-primary-dark: #3e2723; /* Deep, elegant espresso brown */
+    --color-accent-cream: #f9f6f1; /* Off-white/cream for light backgrounds */
+    --color-background-soft: #f4f0ec; /* Section background color */
+    /* Typography */
+    --font-primary: 'Georgia', 'Times New Roman', serif;
+    --font-secondary: 'Playfair Display', serif; /* An elegant, professional font (requires link/import) */
 }
 
+/* Fallback for site.css overrides */
 body {
-    background-color: var(--color-background);
-    color: var(--color-text);
+    background-color: var(--color-accent-cream);
     font-family: var(--font-primary);
-    line-height: 1.6;
+    color: var(--color-primary-dark);
 }
 
-/* --- Helper Classes --- */
-.section {
-    padding: 60px 15px;
-}
-
-.section-bg {
-    background-color: var(--color-card-bg);
-    border-top: 1px solid var(--color-border);
-    border-bottom: 1px solid var(--color-border);
+.section-bg-pro {
+    background-color: var(--color-background-soft);
 }
 
 .section-title {
-    color: var(--color-primary);
+    font-family: var(--font-secondary);
+    font-size: 2.5em;
+    color: var(--color-primary-dark);
     font-weight: 700;
-    font-size: 2.25rem;
-    margin-bottom: 40px;
-    position: relative;
-    padding-bottom: 10px;
 }
 
-    .section-title::after {
-        content: '';
-        position: absolute;
-        bottom: 0;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 50px;
-        height: 3px;
-        background-color: var(--color-accent);
-    }
+.section-subtitle {
+    font-style: italic;
+}
 
-/* --- Hero Section --- */
+/* ---------------------------------- */
+/* 2. Hero Section */
+/* ---------------------------------- */
 .hero-section {
-    /* You REALLY need a high-quality image here */
-    background-image: linear-gradient(rgba(26, 58, 90, 0.7), rgba(26, 58, 90, 0.7)), url('/Images/your-hero-background.jpg');
-    background-size: cover;
-    background-position: center;
-    height: 60vh;
+    padding: 120px 20px;
+    background: linear-gradient(135deg, var(--color-primary-dark) 0%, #6d4c41 100%);
+    color: #fff;
     min-height: 450px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    color: white;
 }
 
 .hero-title {
-    font-size: 3.2rem;
-    font-weight: 700;
-    text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+    font-family: var(--font-secondary);
+    font-weight: 300 !important; /* Lighter weight for elegance */
+    letter-spacing: 2px;
 }
 
 .hero-subtitle {
-    font-size: 1.2rem;
-    margin-bottom: 30px;
-    font-weight: 300;
+    color: #f7e0c4;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
-.btn-gold {
-    background-color: var(--color-accent);
+/* Gold Primary Button */
+.btn-primary-gold {
+    background-color: var(--color-gold);
+    border-color: var(--color-gold);
     color: #fff;
-    border: none;
-    padding: 12px 30px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    border-radius: var(--border-radius);
     transition: all 0.3s ease;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
 
-    .btn-gold:hover {
-        background-color: #c09e32; /* Darker gold */
+    .btn-primary-gold:hover {
+        background-color: var(--color-gold-dark);
+        border-color: var(--color-gold-dark);
         color: #fff;
-        transform: translateY(-3px);
-        box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+        transform: translateY(-2px);
     }
 
-/* --- Categories Section --- */
-.category-card {
+/* Outline Button */
+.btn-outline-light-pro {
+    color: #fff;
+    border-color: #fff;
+    transition: all 0.3s ease;
+}
+
+    .btn-outline-light-pro:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+        color: #fff;
+        border-color: #fff;
+    }
+
+/* ---------------------------------- */
+/* 3. Browse by Category */
+/* ---------------------------------- */
+.category-card-pro {
     display: block;
-    padding: 25px 20px;
-    background-color: var(--color-card-bg);
-    border-radius: var(--border-radius);
+    text-align: center;
+    padding: 30px 20px;
+    border: 1px solid #e0d9d0;
+    border-radius: 8px;
     text-decoration: none;
-    color: var(--color-primary);
-    border: 1px solid var(--color-border);
+    color: var(--color-primary-dark);
     transition: all 0.3s ease;
-    margin-bottom: 20px;
+    background-color: #fff;
 }
 
-    .category-card:hover {
+    .category-card-pro:hover {
         transform: translateY(-5px);
-        box-shadow: var(--shadow-md);
-        border-color: var(--color-accent);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+        border-color: var(--color-gold);
+        color: var(--color-primary-dark);
     }
 
-.category-icon {
-    font-size: 2.5rem; /* Assumes you are using Bootstrap Icons */
-    color: var(--color-accent);
+.category-icon-wrap {
+    font-size: 2.5em;
+    color: var(--color-gold);
+    margin-bottom: 10px;
 }
 
-.category-card h5 {
-    margin-top: 15px;
-    font-weight: 600;
-    font-size: 1.1rem;
-    color: var(--color-text);
-}
-
-/* --- Auction Card --- */
+/* ---------------------------------- */
+/* 4. Featured Auctions */
+/* ---------------------------------- */
 .auction-card {
-    background-color: var(--color-card-bg);
-    border-radius: var(--border-radius);
-    border: 1px solid var(--color-border);
-    box-shadow: var(--shadow-sm);
-    transition: all 0.3s ease;
-    overflow: hidden; /* Important for border-radius on image */
+    border-radius: 8px;
+    transition: box-shadow 0.3s ease;
+    overflow: hidden;
+    background-color: #fff;
 }
 
     .auction-card:hover {
-        transform: translateY(-5px);
-        box-shadow: var(--shadow-md);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15) !important;
     }
 
-.card-image-top {
-    position: relative;
+.auction-img {
     height: 250px;
-}
-
-.auction-card .card-img-top {
-    width: 100%;
-    height: 100%;
     object-fit: cover;
+    width: 100%;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
 }
 
-/* "Sold" Overlay */
-.card-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(255, 255, 255, 0.85);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 10;
+.card-title {
+    font-family: var(--font-secondary);
+    font-size: 1.4em;
+    margin-bottom: 0.5rem;
 }
 
-    .card-overlay span {
-        font-size: 1.3rem;
-        font-weight: 700;
-        color: #d9534f; /* Bootstrap's "danger" red */
-        border: 2px solid #d9534f;
-        padding: 8px 16px;
-        border-radius: 4px;
-        transform: rotate(-5deg);
-        background-color: #fff;
-    }
-
-.auction-card .card-body {
-    padding: 20px;
-    text-align: left; /* Aligned left is often cleaner */
+.text-primary-gold {
+    color: var(--color-gold) !important;
 }
 
-.auction-card .card-title {
-    color: var(--color-primary);
-    font-weight: 600;
-    font-size: 1.2rem;
-    margin-bottom: 10px;
-    /* Truncate long titles */
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+.btn-primary-dark {
+    background-color: var(--color-primary-dark);
+    color: white;
+    border: 1px solid var(--color-primary-dark);
+    transition: background-color 0.3s ease;
 }
 
-.auction-card .card-price {
-    font-size: 1rem;
-    color: var(--color-text-light);
-    margin-bottom: 15px;
-}
-
-    .auction-card .card-price strong {
-        color: #28a745; /* Bootstrap's "success" green */
-        font-weight: 700;
-        font-size: 1.1rem;
-    }
-
-.card-text {
-    font-size: 0.9rem;
-    color: var(--color-text-light);
-}
-
-.auction-timer {
-    font-weight: 700;
-    font-size: 0.95rem;
-}
-
-.timer-active {
-    color: #28a745; /* Green */
-}
-
-.timer-closed {
-    color: #d9534f; /* Red */
-}
-
-.btn-bid {
-    background-color: var(--color-primary);
-    border-color: var(--color-primary);
-    color: #fff;
-    font-weight: 600;
-    padding: 10px 0;
-    border-radius: 6px;
-    transition: all 0.3s ease;
-}
-
-    .btn-bid:hover {
-        background-color: #122a42; /* Darker navy */
-        border-color: #122a42;
-    }
-
-    .btn-bid.disabled {
-        background-color: #6c757d; /* Bootstrap's "secondary" grey */
-        border-color: #6c757d;
-    }
-
-/* --- How It Works Section --- */
-.how-it-works-step {
-    padding: 20px;
-    text-align: center;
-}
-
-.step-icon {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    background-color: var(--color-accent-light);
-    border: 2px solid var(--color-accent);
-    color: var(--color-accent);
-    font-size: 1.5rem;
-    font-weight: 700;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 20px;
-    transition: all 0.3s ease;
-}
-
-.how-it-works-step:hover .step-icon {
-    background-color: var(--color-accent);
-    color: #fff;
-    transform: scale(1.1);
-}
-
-.how-it-works-step h3 {
-    color: var(--color-primary);
-    font-weight: 600;
-    margin-bottom: 10px;
-}
-
-.how-it-works-step p {
-    color: var(--color-text-light);
-    font-size: 0.95rem;
-}
-
-/* --- Footer Section --- */
-.footer-section {
-    background-color: var(--color-primary);
-    color: rgba(255, 255, 255, 0.8);
-    padding: 50px 20px;
-    text-align: center;
-}
-
-    .footer-section h2 {
+    .btn-primary-dark:hover {
+        background-color: #5d4037; /* Lighter shade of dark brown */
+        border-color: #5d4037;
         color: white;
-        font-weight: 600;
     }
 
-    .footer-section p {
-        font-size: 0.9rem;
-        max-width: 700px;
-        margin-left: auto;
-        margin-right: auto;
-        font-weight: 300;
+.btn-outline-secondary-pro {
+    color: var(--color-primary-dark);
+    border-color: #ccc;
+}
+
+    .btn-outline-secondary-pro:hover {
+        background-color: #f0f0f0;
+        border-color: #aaa;
     }
 
-/* --- Listing Page Card Layout --- */
+.sold-badge {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background-color: #b22222;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
 
-.listing-card {
-    display: flex;
-    flex-direction: column; /* Stack image on top on mobile */
-    background: var(--color-card-bg);
-    border: 1px solid var(--color-border);
-    border-radius: var(--border-radius);
-    box-shadow: var(--shadow-sm);
-    overflow: hidden;
+/* ---------------------------------- */
+/* 5. How It Works */
+/* ---------------------------------- */
+.how-it-works-step {
+    border-radius: 8px;
+    transition: transform 0.3s ease;
+}
+
+    .how-it-works-step:hover {
+        transform: translateY(-5px);
+    }
+
+.step-icon-pro {
+    width: 50px;
+    height: 50px;
+    line-height: 50px;
+    margin: 0 auto;
+    background-color: var(--color-gold);
+    color: white;
+    border-radius: 50%;
+    font-size: 1.5em;
+    font-weight: bold;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* ---------------------------------- */
+/* 6. Testimonials */
+/* ---------------------------------- */
+.testimonial-card {
+    border: 1px solid #e0d9d0;
     transition: box-shadow 0.3s ease;
 }
 
-    .listing-card:hover {
-        box-shadow: var(--shadow-md);
-    }
-
-.listing-card-img-wrapper {
-    width: 100%;
-    height: 180px; /* Fixed height for mobile */
+.shadow-pro {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
 }
 
-.listing-card-img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+.testimonial-quote {
+    font-size: 0.95em;
 }
-
-.listing-card-body {
-    padding: 15px;
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1; /* Makes card bodies equal height if in a grid */
-}
-
-.listing-card-title {
-    margin-bottom: 10px;
-}
-
-.listing-card-title-link {
-    font-size: 1.4rem;
-    font-weight: 600;
-    color: var(--color-primary);
-    text-decoration: none;
-    transition: color 0.2s ease;
-}
-
-    .listing-card-title-link:hover {
-        color: var(--color-accent);
-    }
-
-.listing-card-desc {
-    color: var(--color-text-light);
-    font-size: 0.95rem;
-    margin-bottom: 15px;
-    flex-grow: 1; /* Pushes timer and button to the bottom */
-}
-
-.listing-card-price {
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: var(--color-text);
-    margin-bottom: 10px;
-}
-
-    .listing-card-price strong {
-        color: #28a745; /* Green */
-        font-size: 1.25rem;
-    }
-
-.listing-card-user {
-    font-size: 0.85rem;
-    color: #888;
-    margin-bottom: 15px;
-}
-
-.listing-card-timer {
-    font-size: 0.9rem;
-    font-weight: 600;
-}
-
-/* Use the same timer styles from home.css */
-.auction-timer {
-    font-weight: 700;
-    font-size: 0.95rem;
-}
-
-.timer-active {
-    color: #28a745;
-}
-
-.timer-closed {
-    color: #d9534f;
-}
-
-
-
-
-
-/* --- Pagination Theme --- */
-
-.pagination .page-link {
-    color: var(--color-primary);
-    border: 1px solid var(--color-border);
-    margin: 0 2px;
-    border-radius: var(--border-radius);
-    transition: all 0.2s ease;
-}
-
-    .pagination .page-link:hover {
-        background-color: var(--color-accent-light);
-        color: var(--color-accent);
-    }
-
-.pagination .page-item.active .page-link {
-    background-color: var(--color-primary);
-    border-color: var(--color-primary);
-    color: #fff;
-    z-index: 2;
-}
-
-.pagination .page-item.disabled .page-link {
-    color: #aaa;
-    background-color: var(--color-background);
-}
-
-/* Style the primary button */
-.btn-primary.btn-bid-details {
-    background-color: var(--color-primary);
-    border-color: var(--color-primary);
-    font-weight: 600;
-    transition: all 0.3s ease;
-}
-
-    .btn-primary.btn-bid-details:hover {
-        background-color: #122a42; /* Darker navy */
-        border-color: #122a42;
-    }
-
-/* --- Global Theme Variables --- */
-:root {
-    --color-text: #333;
-    --color-text-light: #555;
-    --color-primary: #1a3a5a; /* Deep Navy */
-    --color-accent: #d4af37; /* Antique Gold */
-    --color-accent-light: #fbf5e5; /* Light Cream */
-    --color-background: #f8f9fa; /* Light Grey */
-    --color-card-bg: #ffffff; /* White */
-    --color-border: #e0e0e0;
-    --font-primary: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    --shadow-sm: 0 2px 8px rgba(0,0,0,0.06);
-    --shadow-md: 0 4px 15px rgba(0,0,0,0.1);
-    --border-radius: 8px;
-}
-
-body {
-    font-family: var(--font-primary);
-    background-color: var(--color-background);
-}
-
-main {
-    /* Ensures the main content doesn't get 'stuck' to the footer */
-    min-height: 70vh;
-}
-
-/* --- Navbar Theme --- */
-.navbar-theme {
-    background-color: var(--color-primary);
-}
-
-    .navbar-theme .nav-link {
-        transition: color 0.2s ease-in-out;
-    }
-
-        .navbar-theme .nav-link:hover,
-        .navbar-theme .nav-link.active {
-            color: var(--color-accent) !important;
-        }
-
-/* --- Themed Gold Button (for Search) --- */
-.btn-gold {
-    background-color: var(--color-accent);
-    color: var(--color-primary);
-    border: none;
-    font-weight: 600;
-    transition: all 0.3s ease;
-}
-
-    .btn-gold:hover {
-        background-color: #c09e32; /* Darker gold */
-        color: #fff;
-    }
-
-
-/* --- Footer Theme --- */
-.footer-section {
-    background-color: var(--color-primary);
-    color: rgba(255, 255, 255, 0.8);
-}
-
-    .footer-section p {
-        margin: 0;
-    }
-
-    .footer-section a {
-        color: rgba(255, 255, 255, 0.8);
-        text-decoration: none;
-        transition: all 0.2s ease;
-    }
-
-        .footer-section a:hover {
-            color: #fff;
-            text-decoration: underline;
-        }
-
-
-/* --- About Us Page Styles --- */
-
-.about-us-content p {
-    font-size: 1.05rem;
-    line-height: 1.7;
-    color: var(--color-text-light);
-}
-
-.about-us-heading {
-    font-weight: 600;
-    color: var(--color-primary);
-    padding-bottom: 5px;
-    border-bottom: 2px solid var(--color-accent);
-    margin-bottom: 15px;
-    display: inline-block; /* Makes border only as long as text */
-}
-
-/* --- Contact Form Card --- */
-.card .form-label {
-    font-weight: 500;
-    color: var(--color-text-light);
-}
-
-/* Use the gold button theme we already created */
-.btn-gold {
-    background-color: var(--color-accent);
-    color: var(--color-primary);
-    border: none;
-    font-weight: 600;
-    padding: 10px;
-    transition: all 0.3s ease;
-}
-
-    .btn-gold:hover {
-        background-color: #c09e32; /* Darker gold */
-        color: #fff;
-    }

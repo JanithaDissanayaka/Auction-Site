@@ -2671,3 +2671,4 @@ C:\Users\Janitha\Desktop\Auction site\v2\Project 1\obj\Debug\net8.0\refint\Proje
 C:\Users\Janitha\Desktop\Auction site\v2\Project 1\obj\Debug\net8.0\Project 1.pdb
 C:\Users\Janitha\Desktop\Auction site\v2\Project 1\obj\Debug\net8.0\Project 1.genruntimeconfig.cache
 C:\Users\Janitha\Desktop\Auction site\v2\Project 1\obj\Debug\net8.0\ref\Project 1.dll
+C:\Users\Janitha\Desktop\Auction site\v2\Project 1\obj\Debug\net8.0\scopedcss\Areas\Identity\Pages\Account\Manage\_Layout.cshtml.rz.scp.css

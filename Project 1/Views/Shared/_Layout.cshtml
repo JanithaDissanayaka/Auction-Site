@@ -76,11 +76,15 @@
                                 <li><a class="dropdown-item" asp-controller="Listings" asp-action="MyBids">My Bids</a></li>
                                 <li> <a class="dropdown-item" asp-controller="Listings" asp-action="WonBids">Won Bids</a>  </li>
                                 <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" asp-area="Identity" asp-page="/Account/Manage/Index">Account Settings</a></li>
+                                <li> <a class="dropdown-item" asp-controller="Account" asp-action="Manage">Manage</a>  </li>
+                                <li> <a class="dropdown-item" asp-controller="Account" asp-action="ChangePassword">ChangePassword</a>  </li>
                                 <li>
-                                    <form class="dropdown-item p-0 m-0" asp-area="Views" asp-page="/Home/Index" method="post" id="logoutForm">
-                                        <button type="submit" class="btn btn-link text-decoration-none w-100 text-start">Logout</button>
+                                <li>
+                                    <form class="dropdown-item p-0 m-0" asp-area="Identity" asp-page="/Account/Logout" method="post" id="logoutForm">
+                                        <button type="submit" class="btn btn-link text-decoration-none w-100 text-start" style="color:black;">Logout</button>
                                     </form>
+                                </li>
+
                                 </li>
                             </ul>
                         </div>

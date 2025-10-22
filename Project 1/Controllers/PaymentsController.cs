@@ -37,7 +37,7 @@ namespace Project_1.Controllers
                         PriceData = new SessionLineItemPriceDataOptions
                         {
                             UnitAmountDecimal = amount * 100,
-                            Currency = "usd",
+                            Currency = "lkr",
                             ProductData = new SessionLineItemPriceDataProductDataOptions
                             {
                                 Name = "Auction Payment"

@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using Project_1.Data.Services;
-using Project_1.Data;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.EntityFrameworkCore;
+using Project_1.Data;
+using Project_1.Data.Services;
 using Project_1.Hubs;
 using Project_1.Services;
 using Stripe;
@@ -14,7 +14,10 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
     ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(connectionString));
+    options.UseSqlServer(
+        connectionString,
+        sql => sql.EnableRetryOnFailure()
+    ));
 
 // ----------------- Identity -----------------
 builder.Services.AddDefaultIdentity<IdentityUser>(options =>
@@ -53,22 +56,34 @@ builder.Services.AddAuthorization(options =>
 var stripeSettings = builder.Configuration.GetSection("Stripe");
 StripeConfiguration.ApiKey = stripeSettings["SecretKey"];
 
-
-
 // ----------------- Build App -----------------
 var app = builder.Build();
 
-// ----------------- Seed Admin -----------------
+// ======================================================
+// ✅ APPLY MIGRATIONS FIRST
+// ======================================================
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    db.Database.Migrate();
+}
+
+// ======================================================
+// ✅ SEED ADMIN ROLE & USER (AFTER TABLES EXIST)
+// ======================================================
 using (var scope = app.Services.CreateScope())
 {
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
     var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
 
     if (!await roleManager.RoleExistsAsync("Admin"))
+    {
         await roleManager.CreateAsync(new IdentityRole("Admin"));
+    }
 
     var adminEmail = "admin@example.com";
     var adminUser = await userManager.FindByEmailAsync(adminEmail);
+
     if (adminUser == null)
     {
         adminUser = new IdentityUser
@@ -77,6 +92,7 @@ using (var scope = app.Services.CreateScope())
             Email = adminEmail,
             EmailConfirmed = true
         };
+
         await userManager.CreateAsync(adminUser, "Admin@123");
         await userManager.AddToRoleAsync(adminUser, "Admin");
     }
@@ -85,7 +101,6 @@ using (var scope = app.Services.CreateScope())
 // ----------------- Middleware -----------------
 if (app.Environment.IsDevelopment())
 {
-    app.UseMigrationsEndPoint();
     app.UseDeveloperExceptionPage();
 }
 else
@@ -116,7 +131,9 @@ app.MapRazorPages();
 
 app.Run();
 
-// ----------------- Fake Email Sender -----------------
+// ======================================================
+// Fake Email Sender (Dev Only)
+// ======================================================
 public class NoEmailSender : IEmailSender
 {
     public Task SendEmailAsync(string email, string subject, string htmlMessage)
@@ -125,7 +142,9 @@ public class NoEmailSender : IEmailSender
     }
 }
 
-// ----------------- SignalR Hub -----------------
+// ======================================================
+// SignalR Hub
+// ======================================================
 namespace Project_1.Hubs
 {
     using Microsoft.AspNetCore.SignalR;

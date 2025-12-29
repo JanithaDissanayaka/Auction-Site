@@ -1,18 +1,38 @@
-pieline{
+pipeline {
     agent any
-    tools{
+
+    tools {
         dotnetsdk 'dotnet-8.0'
     }
-    
-    stages{
-        stage ('build app'){
-            steps{
-                script{
-                    echo "build the application"
-                    sh 'dotnet restore'
 
+    stages {
+
+        stage('Build App') {
+            steps {
+                script {
+                    echo "Building the application..."
+                    sh 'dotnet restore'
+                    sh 'dotnet build -c Release --no-restore'
                 }
             }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    echo "Building the Docker image..."
+                    sh 'docker build -t auction:${BUILD_NUMBER} .'
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            echo "✅ Pipeline completed successfully"
+        }
+        failure {
+            echo "❌ Pipeline failed"
         }
     }
 }

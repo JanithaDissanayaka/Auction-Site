@@ -1,0 +1,18 @@
+pieline{
+    agent any
+    tools{
+        dotnetsdk 'dotnet-8.0'
+    }
+    
+    stages{
+        stage ('build app'){
+            steps{
+                script{
+                    echo "build the application"
+                    sh 'dotnet restore'
+
+                }
+            }
+        }
+    }
+}

@@ -1,19 +1,12 @@
 pipeline {
     agent any
 
-    tools {
-        dotnetsdk 'dotnet-8.0'
-    }
-
     stages {
-
-        stage('Build App') {
+        stage('Build app') { 
             steps {
-                script {
-                    echo "Building the application..."
-                    sh 'dotnet restore'
-                    sh 'dotnet build -c Release --no-restore'
-                }
+                echo "Building the application..."
+                sh 'dotnet restore' 
+                sh 'dotnet build --no-restore' 
             }
         }
 

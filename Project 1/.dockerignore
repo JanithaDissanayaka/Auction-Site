@@ -4,5 +4,4 @@ obj/
 .vscode/
 *.user
 *.log
-Dockerfile
 docker-compose*

@@ -1,19 +1,43 @@
 pipeline {
-    agent any
+    agent any{
+        docker {
+            image 'mcr.microsoft.com/dotnet/sdk:8.0'
+            args '-u root'
+        }
+    }
+
+    options {
+        skipStagesAfterUnstable()
+    }
+
     stages {
         stage('Build') {
             steps {
+                sh 'dotnet --version'
                 sh 'dotnet restore'
                 sh 'dotnet build --no-restore'
             }
         }
-        stage('Test') { 
+
+        stage('Test') {
             steps {
-                sh 'dotnet test --no-build --no-restore --collect "XPlat Code Coverage"' 
+                sh 'dotnet test --no-build --no-restore --collect "XPlat Code Coverage"'
+            }
+        }
+
+        stage('build image'){
+            steps{
+                sh 'docker build -t auctionsite .'
+            }
+        }
+
+        stage('Deliver') {
+            steps {
+                sh 'dotnet publish SimpleWebApi --no-restore -o published'
             }
             post {
-                always {
-                    recordCoverage(tools: [[parser: 'COBERTURA', pattern: '**/*.xml']], sourceDirectories: [[path: 'SimpleWebApi.Test/TestResults']])  
+                success {
+                    archiveArtifacts artifacts: 'published/**'
                 }
             }
         }

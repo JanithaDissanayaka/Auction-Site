@@ -1,5 +1,5 @@
 pipeline {
-    agent any{
+    agent {
         docker {
             image 'mcr.microsoft.com/dotnet/sdk:8.0'
             args '-u root'
@@ -25,15 +25,9 @@ pipeline {
             }
         }
 
-        stage('build image'){
-            steps{
-                sh 'docker build -t auctionsite .'
-            }
-        }
-
         stage('Deliver') {
             steps {
-                sh 'dotnet publish SimpleWebApi --no-restore -o published'
+                sh 'dotnet publish "Project 1.csproj" --no-restore -o published'
             }
             post {
                 success {

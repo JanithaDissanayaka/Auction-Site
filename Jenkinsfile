@@ -1,32 +1,24 @@
 pipeline {
-    agent {
-        docker {
-            image 'mcr.microsoft.com/dotnet/sdk:8.0'
-            args '-u root'
-        }
-    }
+    agent any
 
     options {
         skipStagesAfterUnstable()
     }
 
     stages {
-        stage('Build') {
+
+        stage('Build & Test') {
+            agent {
+                docker {
+                    image 'mcr.microsoft.com/dotnet/sdk:8.0'
+                    args '-u root'
+                }
+            }
             steps {
                 sh 'dotnet --version'
                 sh 'dotnet restore'
                 sh 'dotnet build --no-restore'
-            }
-        }
-
-        stage('Test') {
-            steps {
-                sh 'dotnet test --no-build --no-restore --collect "XPlat Code Coverage"'
-            }
-        }
-
-        stage('Deliver') {
-            steps {
+                sh 'dotnet test --no-build --no-restore'
                 sh 'rm -rf published'
                 sh 'dotnet publish "Project 1.csproj" --no-restore -o published'
             }
@@ -36,13 +28,18 @@ pipeline {
                 }
             }
         }
-        stage('Image'){
-            steps{
-                sh 'curl -fsSL https://get.docker.com -o get-docker.sh'
-                sh './get-docker.sh --dry-run'
+
+        stage('Image') {
+            agent {
+                docker {
+                    image 'docker:cli'
+                    args '-u root -v /var/run/docker.sock:/var/run/docker.sock'
+                }
+            }
+            steps {
+                sh 'docker version'
                 sh 'docker build -t auction .'
             }
         }
-
     }
 }

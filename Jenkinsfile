@@ -35,5 +35,11 @@ pipeline {
                 }
             }
         }
+        stage('Image'){
+            steps{
+                sh 'docker build -t auction .'
+            }
+        }
+
     }
 }

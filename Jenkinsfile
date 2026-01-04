@@ -27,6 +27,7 @@ pipeline {
 
         stage('Deliver') {
             steps {
+                sh 'rm -rf published'
                 sh 'dotnet publish "Project 1.csproj" --no-restore -o published'
             }
             post {
@@ -37,8 +38,8 @@ pipeline {
         }
         stage('Image'){
             steps{
-                sh curl -fsSL https://get.docker.com -o get-docker.sh
-                sh ./get-docker.sh --dry-run
+                sh 'curl -fsSL https://get.docker.com -o get-docker.sh'
+                sh './get-docker.sh --dry-run'
                 sh 'docker build -t auction .'
             }
         }
